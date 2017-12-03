@@ -2,10 +2,19 @@ const express = require ('express');
 const router = express.Router();
 const Ninja = require('../models/ninja');
 
+
+
+
+
 // get a list of ninjas from the db
 router.get('/ninjas', function(req, res, next){
     res.send({type: 'GET'});
 });
+
+
+
+
+
 
 // add a new ninja to the db
 router.post('/ninjas', function(req, res, next){
@@ -21,14 +30,27 @@ router.post('/ninjas', function(req, res, next){
   }).catch(next) // next is a function (more like an error handling middleware (next piece of middleware in our middleware stack) which gets fired if Ninja.create fails aka there is an error) defined in the main file app.js. You can also do this with a callback function like this: .catch(function(params) { // do something })
 });
 
+
+
+
+
 // update a ninja in the db
 router.put('/ninjas/:id', function(req, res, next){
     res.send({type: 'PUT'});
 });
 
+
+
+
+
 // delete a ninja from the db
 router.delete('/ninjas/:id', function(req, res, next){
-    res.send({type: 'DELETE'});
+    // findByIdAndRemove is a mongoose method
+    Ninja.findByIdAndRemove({_id: req.params.id}).then(function(myninja){
+        res.send(myninja);
+    }).catch(next);
 });
+
+
 
 module.exports = router; // need to export so that you can use it
