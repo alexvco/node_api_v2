@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// create ninja Schema & model
+// create ninja Schema & model, note that by creating this schema essentially you are making the following the permitted params. So that when i try to create a new document with extra params such as {"hav": "havgit"} it will be ignored
 const NinjaSchema = new Schema({
     name: {
         type: String,

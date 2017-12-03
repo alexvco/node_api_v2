@@ -27,7 +27,7 @@ router.post('/ninjas', function(req, res, next){
 
   Ninja.create(req.body).then(function(data_saved_in_db_in_this_case_ninja){
     res.send(data_saved_in_db_in_this_case_ninja); // this will send the json saved back to the user, basically as an acknowledgement so that it knows everything has been successful.
-  }).catch(next) // next is a function (more like an error handling middleware (next piece of middleware in our middleware stack) which gets fired if Ninja.create fails aka there is an error) defined in the main file app.js. You can also do this with a callback function like this: .catch(function(params) { // do something })
+  }).catch(next); // next is a function (more like an error handling middleware (next piece of middleware in our middleware stack) which gets fired if Ninja.create fails aka there is an error) defined in the main file app.js. You can also do this with a callback function like this: .catch(function(params) { // do something })
 });
 
 
@@ -36,7 +36,20 @@ router.post('/ninjas', function(req, res, next){
 
 // update a ninja in the db
 router.put('/ninjas/:id', function(req, res, next){
-    res.send({type: 'PUT'});
+  // Ninja.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(pre_updated_ninja){
+  //   res.send(pre_updated_ninja); // this sends back the pre updated ninja, we don't want to send this back
+  // });
+
+  // findByIdandUpdate is a mongoose function, that only updates the params passed in req.body and does NOT nullify all other attributes of the record that were not passed in req.body unlike the traditional mongo update function
+  // Ninja.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(){
+  //   Ninja.findOne({_id: req.params.id}).then(function(updated_ninja){ // this is making an extra db query that we don't need to make, see how we do below by passing a third parameter - an object {new: true} to the mongoose function
+  //     res.send(updated_ninja);
+  //   });
+  // });
+
+   Ninja.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true}).then(function(updated_ninja){
+    res.send(updated_ninja);
+  }).catch(next);
 });
 
 
@@ -46,8 +59,8 @@ router.put('/ninjas/:id', function(req, res, next){
 // delete a ninja from the db
 router.delete('/ninjas/:id', function(req, res, next){
     // findByIdAndRemove is a mongoose method
-    Ninja.findByIdAndRemove({_id: req.params.id}).then(function(myninja){
-        res.send(myninja);
+    Ninja.findByIdAndRemove({_id: req.params.id}).then(function(pre_deleted_ninja){
+        res.send(pre_deleted_ninja);
     }).catch(next);
 });
 
