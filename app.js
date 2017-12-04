@@ -16,6 +16,11 @@ mongoose.Promise = global.Promise; // we are overwriting mongoose's Promise, wit
 
 
 
+
+//set up static files
+app.use(express.static('public'));
+
+
 // request handling and parsing middleware
 app.use(bodyParser.json()); // make sure this is always before your routes, so you have access to the request object (i.e., req.body), once it hits your routes. This is a middleware that gets hit before your routes.
 

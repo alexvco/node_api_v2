@@ -7,6 +7,7 @@ const Ninja = require('../models/ninja');
 
 
 // get a list of ninjas from the db
+// remember your get request looks like this: http://localhost:4000/api/v2/ninjas?lat=25&lng=-80
 router.get('/ninjas', function(req, res, next){
     // Ninja.find({}).then(function(ninjas){
     //     res.send(ninjas);
