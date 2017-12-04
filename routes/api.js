@@ -8,8 +8,64 @@ const Ninja = require('../models/ninja');
 
 // get a list of ninjas from the db
 router.get('/ninjas', function(req, res, next){
-    res.send({type: 'GET'});
+    // Ninja.find({}).then(function(ninjas){
+    //     res.send(ninjas);
+    // });
+    Ninja.geoNear(
+        {type: 'Point', coordinates: [parseFloat(req.query.lat), parseFloat(req.query.lng)]},
+        {maxDistance: 100000, spherical: true} // 100,000meters of lat and lng 
+    ).then(function(ninjas){
+        res.send(ninjas);
+    }).catch(next);
 });
+// when creating ninjas to be retrieved by this get method, you're body should look like this:
+// {
+//   "name": "Jason",
+//   "rank": "fourth",
+//   "geometry": {
+//     "type": "point",
+//     "coordinates": [25.3,-80.14]
+//   }
+// }
+// your response will be like the following, note that it has distance. dont forget to include the query params in your get request: http://localhost:4000/api/v2/ninjas?lat=25&lng=-80
+// [
+//     {
+//         "dis": 10858.173424394432,
+//         "obj": {
+//             "name": "Jason",
+//             "rank": "fourth",
+//             "geometry": {
+//                 "coordinates": [
+//                     25.2,
+//                     -80.1
+//                 ],
+//                 "_id": "5a249f4371748b50d403a1e2",
+//                 "type": "point"
+//             },
+//             "__v": 0,
+//             "_id": "5a249f4371748b50d403a1e1",
+//             "available": false
+//         }
+//     },
+//     {
+//         "dis": 16005.722409289761,
+//         "obj": {
+//             "name": "Mike",
+//             "rank": "fere",
+//             "geometry": {
+//                 "coordinates": [
+//                     25.3,
+//                     -80.2
+//                 ],
+//                 "_id": "5a249ff071748b50d403a1e4",
+//                 "type": "point"
+//             },
+//             "__v": 0,
+//             "_id": "5a249ff071748b50d403a1e3",
+//             "available": false
+//         }
+//     }
+// ]
 
 
 
@@ -29,6 +85,7 @@ router.post('/ninjas', function(req, res, next){
     res.send(data_saved_in_db_in_this_case_ninja); // this will send the json saved back to the user, basically as an acknowledgement so that it knows everything has been successful.
   }).catch(next); // next is a function (more like an error handling middleware (next piece of middleware in our middleware stack) which gets fired if Ninja.create fails aka there is an error) defined in the main file app.js. You can also do this with a callback function like this: .catch(function(params) { // do something })
 });
+
 
 
 
